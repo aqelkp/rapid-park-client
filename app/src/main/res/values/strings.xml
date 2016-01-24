@@ -18,4 +18,5 @@
         <item>Feed</item>
         <item>Notifications</item>
     </string-array>
+    <string name="title_activity_booking">BookingActivity</string>
 </resources>

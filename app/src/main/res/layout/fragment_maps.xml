@@ -5,7 +5,55 @@
 
     <com.google.android.gms.maps.MapView android:id="@+id/mapview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/hiden"
+        android:visibility="gone"
+        android:background="@color/colorPrimary">
+
+        <android.support.v7.widget.AppCompatButton
+            style="@style/Base.ThemeOverlay.AppCompat.Dark"
+            android:backgroundTint="@color/colorAccent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Book Parking"
+            android:id="@+id/bookbutton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:textColor="#ffffff"
+            android:layout_alignParentTop="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Bookinng charge ₹20"
+            android:id="@+id/bookingcharge"
+            android:textColor="#ffffff"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Valid only for 30 minutes"
+            android:id="@+id/textView2"
+            android:layout_below="@+id/bookingcharge"
+            android:layout_alignLeft="@+id/bookingcharge"
+            android:layout_alignStart="@+id/bookingcharge" />
+    </RelativeLayout>
 
 
 </RelativeLayout>
