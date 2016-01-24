@@ -29,6 +29,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     MapView mapView;
     GoogleMap map;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_maps, container, false);
@@ -64,6 +65,37 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         rlp.setMargins(0, 0, 30, 30);
         //  new GetSuggestion().execute("crc");
+        final LatLngBounds[] currentCameraBounds = new LatLngBounds[1];
+        currentCameraBounds[0]=new LatLngBounds(new LatLng(0,0),new LatLng(0,0));
+
+       map.setOnCameraChangeListener( new GoogleMap.OnCameraChangeListener() {
+           private int CAMERA_MOVE_REACT_THRESHOLD_MS = 500;
+           private long lastCallMs = Long.MIN_VALUE;
+
+           @Override
+           public void onCameraChange(CameraPosition cameraPosition) {
+               LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+               // Check whether the camera changes report the same boundaries (?!), yes, it happens
+               if (currentCameraBounds[0].northeast.latitude == bounds.northeast.latitude
+                       && currentCameraBounds[0].northeast.longitude == bounds.northeast.longitude
+                       && currentCameraBounds[0].southwest.latitude == bounds.southwest.latitude
+                       && currentCameraBounds[0].southwest.longitude == bounds.southwest.longitude) {
+                   return;
+               }
+
+               final long snap = System.currentTimeMillis();
+               if (lastCallMs + CAMERA_MOVE_REACT_THRESHOLD_MS > snap) {
+                   lastCallMs = snap;
+                   return;
+               }
+
+               // fetchData(bounds);
+
+               lastCallMs = snap;
+               currentCameraBounds[0] = bounds;
+               Log.d("lat lan" ,(new LatLng(currentCameraBounds[0].northeast.latitude,currentCameraBounds[0].northeast.longitude)).toString());
+           }
+       });
 
 
         return v;
