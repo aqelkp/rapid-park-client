@@ -1,0 +1,169 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".LoginActivity"
+    >
+
+    <!-- action bar -->
+
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/gr_login_bg"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        >
+
+
+            <android.support.v4.view.ViewPager
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/pager"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="98dp">
+
+            </android.support.v4.view.ViewPager>
+
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/hpcontainer"
+            android:layout_marginBottom="-132dp">
+
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_above="@+id/car"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/radiodot"
+                    android:src="@drawable/radio_dot"
+                    />
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/radio1"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/radio_off"
+                    />
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/radio3"
+                    android:src="@drawable/radio_off"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/radio2"
+                    android:layout_toEndOf="@+id/radio2" />
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/radio2"
+                    android:src="@drawable/radio_off"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/radio1"
+                    android:layout_toEndOf="@+id/radio1" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:weightSum="100"
+                android:id="@+id/hidden_pannel"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="false"
+                android:visibility="visible"
+                android:layout_alignParentEnd="false">
+
+                <LinearLayout
+                    android:id="@+id/bfacebook"
+                    android:layout_width="fill_parent"
+                    android:layout_height="55dp"
+                    android:clickable="true"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/bg_button_fb">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="30dp"
+                        android:src="@drawable/facebook_icon"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="Continue With Facebook"
+                        android:textColor="#ffffffff"
+                        android:textSize="16dp"
+                        android:textIsSelectable="false"
+                        android:layout_marginLeft="13dp"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/bgoogle"
+                    android:layout_width="fill_parent"
+                    android:layout_height="55dp"
+                    android:background="@drawable/bg_button_plus"
+                    android:clickable="true"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/google_plus"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="26dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:text="Continue With Google"
+                        android:autoText="false"
+                        android:textColor="#ffffffff"
+                        android:textSize="16dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
