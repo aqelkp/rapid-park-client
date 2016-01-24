@@ -1,15 +1,10 @@
-package xyz.brozzz.rapidpark;
+package xyz.brozzz.rapidpark.Fragments;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
@@ -26,7 +21,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -37,6 +31,8 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 
 import in.aqel.quickparksdk.Objects.Parking;
+import xyz.brozzz.rapidpark.Activity.BookingActivity;
+import xyz.brozzz.rapidpark.R;
 
 
 /**
@@ -106,10 +102,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
 
-        Parking[] parking = {new Parking("phoenix mall","asjhkfkkkj",12.98927,80.2191565,200,100,150,50
+        Parking[] parking = {new Parking("phoenix mall","asjhkfkkkj1",12.98927,80.2191565,200,100,150,50
                 ,10,50,true,true,true),
-                new Parking("oppsit phoenix mall","asjhkfkkkj",12.989637, 80.217870,200,100,150,50
-                        ,10,50,true,true,true)};
+                new Parking("oppsit phoenix mall","asjhkfkkkj",12.989637, 80.217870,100,98,40,35
+                        ,5,15,true,true,true)};
          gson = new Gson();
         parkings.put(parking[0].getId(), gson.toJson(parking[0]));
         parkings.put(parking[1].getId(), gson.toJson(parking[1]));
@@ -151,11 +147,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                    return;
                }
 
-               // fetchData(bounds);
+               FetchData(bounds);
 
                lastCallMs = snap;
                currentCameraBounds[0] = bounds;
-               //Log.d("lat lan" ,(new LatLng(currentCameraBounds[0].northeast.latitude,currentCameraBounds[0].northeast.longitude)).toString());
+               Log.d("lat lan" ,(new LatLng(currentCameraBounds[0].northeast.latitude,currentCameraBounds[0].northeast.longitude)).toString());
            }
        });
         bookButton.setOnClickListener(new View.OnClickListener() {
@@ -169,6 +165,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         });
 
         return v;
+    }
+
+    private void FetchData(LatLngBounds bounds) {
+
     }
 
     @Override
@@ -230,18 +230,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         @Override
         public View getInfoWindow(Marker marker) {
+            Log.d(" here i am",marker.getSnippet());
+            Parking parking = gson.fromJson(marker.getSnippet(),Parking.class)  ;
+
+            TextView tvTitle = ((TextView)myContentsView.findViewById(R.id.tittle));
+            TextView charge = ((TextView)myContentsView.findViewById(R.id.charge));
+            TextView car = ((TextView)myContentsView.findViewById(R.id.carcount));
+            TextView bike = ((TextView)myContentsView.findViewById(R.id.bike_ount));
+
+            charge.setText("₹"+parking.getParkingCharge()+" per hour");
+            car.setText(parking.getCurrentCars()+"/"+parking.getTotalCars());
+            bike.setText(parking.getCurrentBikes()+"/"+parking.getTotalBikes());
+            tvTitle.setText(marker.getTitle());
+
             return myContentsView;
 
         }
 
         @Override
         public View getInfoContents(Marker marker) {
-
-            TextView tvTitle = ((TextView)myContentsView.findViewById(R.id.tittle));
-            tvTitle.setText(marker.getTitle());
-            TextView tvSnippet = ((TextView)myContentsView.findViewById(R.id.charge));
-
-            return myContentsView;
+           return null;
         }
     }
     private void setUpMapIfNeeded(){
