@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':quickparksdk'
+project(':quickparksdk').projectDir = new File(settingsDir, '../RapidPark-Adminstrator/quickparksdk')
