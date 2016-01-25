@@ -1,33 +1,35 @@
 package xyz.brozzz.rapidpark.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.facebook.login.LoginManager;
-import com.google.android.gms.plus.Plus;
+import com.firebase.client.Firebase;
 
+import in.aqel.quickparksdk.Utils.AppConstants;
 import in.aqel.quickparksdk.Utils.PrefUtils;
 import xyz.brozzz.rapidpark.Fragments.MapFragment;
 import xyz.brozzz.rapidpark.R;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    Firebase ref;
+    private static String LOG_TAG = "MainActivity";
+    Context context = MainActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Firebase.setAndroidContext(this);
+
+        ref = new Firebase(AppConstants.SERVER);
+
 /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +71,7 @@ public class MainActivity extends AppCompatActivity
         TextView Navemail=(TextView) headerView.findViewById(R.id.email);
         TextView Navname=(TextView) headerView.findViewById(R.id.name);
         ImageView Navprofile =(ImageView) headerView.findViewById(R.id.NavimageView);
-        Navemail.setText(PrefUtils.getEmail(this));
+//        Navemail.setText(PrefUtils.getEmail(this));
         Navname.setText(PrefUtils.getName(this));
         Glide.with(this).load(PrefUtils.getProfilePic(this)).into(Navprofile);
 
@@ -72,6 +79,11 @@ public class MainActivity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, new MapFragment());
         fragmentTransaction.commit();
+
+
+
+
+
     }
 
     @Override
