@@ -20,4 +20,5 @@
     </string-array>
     <string name="title_activity_booking">BookingActivity</string>
     <string name="facebook_app_id">569738399866028</string>
+    <string name="title_activity_qr">Rapid Park</string>
 </resources>
