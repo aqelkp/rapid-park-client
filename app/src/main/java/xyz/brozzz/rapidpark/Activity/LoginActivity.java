@@ -1,6 +1,5 @@
 package xyz.brozzz.rapidpark.Activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,28 +14,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
-import com.facebook.login.widget.LoginButton;
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 
@@ -47,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import in.aqel.quickparksdk.Objects.User;
 import in.aqel.quickparksdk.Utils.AppConstants;
 import in.aqel.quickparksdk.Utils.PrefUtils;
 import xyz.brozzz.rapidpark.R;
@@ -60,7 +57,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     ImageView[] radios,Images;
     Boolean ButtonVisiblity=false;
     private View hiddenPanel,container;
-
+    Firebase ref;
+    private static String LOG_TAG = "LoginActivity";
 
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -123,6 +121,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ac_login);
+
+        Firebase.setAndroidContext(getBaseContext());
+        ref = new Firebase(AppConstants.SERVER);
+
 
         descriptions = getResources().getStringArray(R.array.descriptions);
         List<String> desList = Arrays.<String>asList(descriptions);
@@ -225,7 +227,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View view) {
                 List<String> permissionNeeds= Arrays.asList("public_profile");
 
-                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends"));
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends", "email"));
             }
         });
         /* *************************************
@@ -264,7 +266,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
          ***************************************/
       //  mLoggedInStatusTextView = (TextView) findViewById(R.id.login_status);
 
-        Firebase.setAndroidContext(getBaseContext());
         /* Create the Firebase ref that is used for all authentication with Firebase */
         mFirebaseRef = new Firebase(AppConstants.SERVER);
 
@@ -469,21 +470,56 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
 
         @Override
-        public void onAuthenticated(AuthData authData) {
+        public void onAuthenticated(final AuthData authData) {
             mAuthProgressDialog.hide();
             Log.i(TAG, provider + " auth successful");
-            String name,email,profilepic;
+
+            final String name,email,profilepic;
             name=authData.getProviderData().get("displayName").toString();
-           // email =authData.getProviderData().get("email").toString();
+            email =authData.getProviderData().get("email").toString();
+            Log.d(LOG_TAG, email);
             profilepic=authData.getProviderData().get("profileImageURL").toString();
+
             PrefUtils.setName(getBaseContext(),name);
-           // PrefUtils.setEmail(getBaseContext(),email);
+            PrefUtils.setEmail(getBaseContext(),email);
             PrefUtils.setProfilePic(getBaseContext(),profilepic);
             PrefUtils.setLogedin(getBaseContext());
-            Intent intent =new Intent(LoginActivity.this,MainActivity.class);
+            final Intent intent =new Intent(LoginActivity.this,MainActivity.class);
 
-            startActivity(intent);
-            finish();
+            ref.child(authData.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getChildrenCount() > 0){
+                        Log.d(LOG_TAG, "User Already exists");
+                        startActivity(intent);
+                        finish();
+
+                    }  else {
+                        Log.d(LOG_TAG, "User does not exists");
+                        User user = new User();
+                        user.setRole("client");
+                        user.setEmail(email);
+                        user.setName(name);
+                        user.setBalance(50);
+                        ref.child("users").child(authData.getUid()).setValue(user, new Firebase.CompletionListener() {
+                            @Override
+                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                Log.d(LOG_TAG, "New user created");
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+
+
+
          //   setAuthenticatedUser(authData);
         }
 
@@ -541,7 +577,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 String token = null;
 
                 try {
-                    String scope = String.format("oauth2:%s", Scopes.PLUS_LOGIN);
+                    String scope = String.format("oauth2:email ", Scopes.PLUS_LOGIN);
                     token = GoogleAuthUtil.getToken(LoginActivity.this, Plus.AccountApi.getAccountName(mGoogleApiClient), scope);
                 } catch (IOException transientEx) {
                     /* Network or server error */
