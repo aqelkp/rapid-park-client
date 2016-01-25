@@ -18,10 +18,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
+import in.aqel.quickparksdk.Objects.User;
 import in.aqel.quickparksdk.Utils.AppConstants;
 import in.aqel.quickparksdk.Utils.PrefUtils;
+import xyz.brozzz.rapidpark.Fragments.BalanceFragment;
 import xyz.brozzz.rapidpark.Fragments.MapFragment;
 import xyz.brozzz.rapidpark.R;
 
@@ -31,6 +36,8 @@ public class MainActivity extends AppCompatActivity
     Firebase ref;
     private static String LOG_TAG = "MainActivity";
     Context context = MainActivity.this;
+    User user;
+    FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +84,37 @@ public class MainActivity extends AppCompatActivity
         Navname.setText(PrefUtils.getName(this));
         Glide.with(this).load(PrefUtils.getProfilePic(this)).into(Navprofile);
 
-        FragmentTransaction fragmentTransaction =
+        fragmentTransaction =
                 getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, new MapFragment());
         fragmentTransaction.commit();
+
+        ref.child("users").child(ref.getAuth().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() > 0){
+                    Log.d(LOG_TAG, "User " + dataSnapshot.toString());
+                    user = dataSnapshot.getValue(User.class);
+                    Log.d(LOG_TAG, "User working" + user.getName());
+
+                    for (DataSnapshot parkingSnap: dataSnapshot.getChildren()) {
+                        Log.d(LOG_TAG, parkingSnap.getValue().toString());
+                        for (DataSnapshot child: parkingSnap.getChildren()) {
+                            Log.d(LOG_TAG, "Key " + child.getKey());
+                            Log.d(LOG_TAG, "Value " + child.getValue());
+                            Log.d(LOG_TAG, "Par" + child.toString());
+
+
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
 
 
 
@@ -105,6 +139,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public User getUser(){
+        return user;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -125,10 +163,17 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_map) {
             // Handle the camera action
+        } else if (id == R.id.nav_balance) {
+            fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, new BalanceFragment());
+            fragmentTransaction.commit();
+
         } else if (id == R.id.nav_booking_history) {
 
 
-        } else if (id == R.id.nav_logout) {
+        }
+        else if (id == R.id.nav_logout) {
             PrefUtils.clearpref(getBaseContext());
             Intent intent =new Intent(MainActivity.this,LoginActivity.class);
             startActivity(intent);

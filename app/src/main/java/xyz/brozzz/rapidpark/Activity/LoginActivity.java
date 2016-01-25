@@ -486,7 +486,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             PrefUtils.setLogedin(getBaseContext());
             final Intent intent =new Intent(LoginActivity.this,MainActivity.class);
 
-            ref.child(authData.getUid()).addValueEventListener(new ValueEventListener() {
+            ref.child("users").child(authData.getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getChildrenCount() > 0){
@@ -500,7 +500,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         user.setRole("client");
                         user.setEmail(email);
                         user.setName(name);
-                        user.setBalance(50);
+                        user.setBalance(50.0f);
                         ref.child("users").child(authData.getUid()).setValue(user, new Firebase.CompletionListener() {
                             @Override
                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
