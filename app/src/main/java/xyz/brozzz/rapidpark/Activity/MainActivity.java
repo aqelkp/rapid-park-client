@@ -1,21 +1,27 @@
 package xyz.brozzz.rapidpark.Activity;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.plus.Plus;
+
+import in.aqel.quickparksdk.Utils.PrefUtils;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -38,6 +44,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(!PrefUtils.isLogedin(this)){
+            Intent Nintent =new Intent(this,LoginActivity.class);
+            startActivity(Nintent);
+            finish();
+        }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -70,8 +81,9 @@ public class MainActivity extends AppCompatActivity
         TextView Navemail=(TextView) headerView.findViewById(R.id.email);
         TextView Navname=(TextView) headerView.findViewById(R.id.name);
         ImageView Navprofile =(ImageView) headerView.findViewById(R.id.NavimageView);
-        Navemail.setText("arunpadyan@gmail.com");
-        Navname.setText("Arun Padiyan");
+        Navemail.setText(PrefUtils.getEmail(this));
+        Navname.setText(PrefUtils.getName(this));
+        Glide.with(this).load(PrefUtils.getProfilePic(this)).into(Navprofile);
 
         FragmentTransaction fragmentTransaction =
                 getSupportFragmentManager().beginTransaction();
@@ -153,14 +165,16 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_logout) {
+            PrefUtils.clearpref(getBaseContext());
+            Intent intent =new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

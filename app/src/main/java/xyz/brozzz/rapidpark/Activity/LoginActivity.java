@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import in.aqel.quickparksdk.Utils.AppConstants;
+import in.aqel.quickparksdk.Utils.PrefUtils;
 import xyz.brozzz.rapidpark.R;
 
 
@@ -284,7 +285,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         /* Check if the user is authenticated with Firebase already. If this is the case we can set the authenticated
          * user and hide hide any login buttons */
         mFirebaseRef.addAuthStateListener(mAuthStateListener);
-
+       // logout();
 
     }
 
@@ -473,15 +474,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             Log.i(TAG, provider + " auth successful");
             String name,email,profilepic;
             name=authData.getProviderData().get("displayName").toString();
-            email =authData.getProviderData().get("displayName").toString();
-            profilepic=authData.getProviderData().get("displayName").toString();
-
+           // email =authData.getProviderData().get("email").toString();
+            profilepic=authData.getProviderData().get("profileImageURL").toString();
+            PrefUtils.setName(getBaseContext(),name);
+           // PrefUtils.setEmail(getBaseContext(),email);
+            PrefUtils.setProfilePic(getBaseContext(),profilepic);
+            PrefUtils.setLogedin(getBaseContext());
             Intent intent =new Intent(LoginActivity.this,MainActivity.class);
-            intent.putExtra("name",name);
-            intent.putExtra("email",email);
-            intent.putExtra("profilePic",profilepic);
-            startActivity(intent);
 
+            startActivity(intent);
+            finish();
          //   setAuthenticatedUser(authData);
         }
 
