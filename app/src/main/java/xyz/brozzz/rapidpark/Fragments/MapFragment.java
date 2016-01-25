@@ -60,6 +60,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     ArrayList<Marker> markers = new ArrayList<>();
     Firebase ref;
     private static String LOG_TAG = "MapFragment";
+    Marker ActiveMarker;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -131,6 +133,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     .position(new LatLng(par.getLat(), par.getLon()))
                     .snippet( gson.toJson(par))
                     .title(par.getName()));
+            ActiveMarker=mark;
            if(!par.isOpen()){
                mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
            }else if(par.getCurrentCars()==par.getTotalCars()&&par.getCurrentBikes()==par.getTotalBikes()){
@@ -173,7 +176,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
                lastCallMs = snap;
                currentCameraBounds[0] = bounds;
-               Log.d("lat lan" ,(new LatLng(currentCameraBounds[0].northeast.latitude,currentCameraBounds[0].northeast.longitude)).toString());
+              // Log.d("lat lan" ,(new LatLng(currentCameraBounds[0].northeast.latitude,currentCameraBounds[0].northeast.longitude)).toString());
            }
        });
         bookButton.setOnClickListener(new View.OnClickListener() {
@@ -185,6 +188,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 startActivity(intent);
             }
         });
+
 
         return v;
     }
@@ -202,7 +206,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 Log.d(LOG_TAG, "onChildAdded");
                 Log.d(LOG_TAG, "Length of snapshot" + snapshot.getChildrenCount());
                 parkLists = new ArrayList<Parking>();
-                Parking parking;
+                Parking parking,ActiveParking = new Parking("phoenix mall","asjdfgsdfghkfkkkj1",12.98927
+                        ,80.2191565,200,100,150,50
+                        ,10,50,true,true,true);
+
                 for (DataSnapshot parkingSnap: snapshot.getChildren()) {
                     parking = parkingSnap.getValue(Parking.class);
                     parking.setId(parkingSnap.getKey());
@@ -216,15 +223,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     Log.d(LOG_TAG, snapshot.getValue().toString());
 
                 for (Marker marker : markers){
-                    marker.remove();
+                    Parking pa1 = gson.fromJson(marker.getSnippet(),Parking.class)  ;
+                    ActiveParking = gson.fromJson(ActiveMarker.getSnippet(),Parking.class)  ;
+
+                    if (pa1.getId().equals(ActiveParking.getId())){
+
+                    }else {
+                        marker.remove();
+                    }
                 }
                 markers.clear();
                 for(Parking par:parkLists){
+                    Marker mark = null;
                     parkings.put(par.getId(), gson.toJson(par));
-                    Marker mark = map.addMarker(new MarkerOptions()
-                            .position(new LatLng(par.getLat(), par.getLon()))
-                            .snippet( gson.toJson(par))
-                            .title(par.getName()));
+
+                    if(par.getId().equals(ActiveParking.getId())) {
+                        ActiveMarker.setSnippet(gson.toJson(par));
+                        mark=ActiveMarker;
+                        Log.d("Ass hole asdasdfsdfsadfasdh",par.getName());
+                    }else{
+                        mark = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(par.getLat(), par.getLon()))
+                                .snippet( gson.toJson(par))
+                                .title(par.getName()));
+                    }
+
 
                     int availability = par.getTotalCars() - par.getCurrentCars() ;
                     if((float) availability / par.getTotalCars() < 0.1){
@@ -236,6 +259,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     }
                     markers.add(mark);
                 }
+                ActiveMarker.showInfoWindow();
+
             }
 
             @Override
@@ -282,6 +307,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public boolean onMarkerClick(Marker marker) {
        Parking parking = gson.fromJson(marker.getSnippet(),Parking.class)  ;
         activeParking=parking;
+        ActiveMarker=marker;
         if(parking.isBooking()){
             slideUpDown(hiden);
             BookingCharge.setText("Bookinng charge ₹"+parking.getBookingCharge());
