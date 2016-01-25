@@ -500,7 +500,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         user.setRole("client");
                         user.setEmail(email);
                         user.setName(name);
-                        user.setBalance(50.0f);
+                        user.setBalance(50.0);
                         ref.child("users").child(authData.getUid()).setValue(user, new Firebase.CompletionListener() {
                             @Override
                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
