@@ -1,26 +1,20 @@
 package xyz.brozzz.rapidpark.Fragments;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.ImageHeaderParser;
+import com.firebase.client.Firebase;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.encoder.QRCode;
 
-
-import java.io.File;
-
+import in.aqel.quickparksdk.Utils.AppConstants;
 import xyz.brozzz.rapidpark.R;
 
 /**
@@ -32,7 +26,9 @@ public class BookingHistoryFragment extends Fragment {
     public final static int BLACK = 0xFF000000;
     public final static int WIDTH = 400;
     public final static int HEIGHT = 400;
-    public final static String STR = "You Aqel you are a fucker";
+    public final static String STR = "BookingHistoryFragment";
+    Firebase ref;
+
     public BookingHistoryFragment() {
         // Required empty public constructor
     }
@@ -43,9 +39,11 @@ public class BookingHistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.fragment_booking_history, container, false);
         ImageView myImage = (ImageView) v.findViewById(R.id.QRimageView);
-       // File f = QRCode.from("Fuck you aqel").to(ImageHeaderParser.ImageType.JPG).file();
+
+        ref = new Firebase(AppConstants.SERVER);
+        // File f = QRCode.from("Fuck you aqel").to(ImageHeaderParser.ImageType.JPG).file();
         try {
-            Bitmap bitmap = encodeAsBitmap(STR);
+            Bitmap bitmap = encodeAsBitmap(ref.getAuth().getUid());
             myImage.setImageBitmap(bitmap);
         } catch (WriterException e) {
             e.printStackTrace();

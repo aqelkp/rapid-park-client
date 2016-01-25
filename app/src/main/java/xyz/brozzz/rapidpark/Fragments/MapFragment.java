@@ -219,7 +219,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
                                         Snackbar
                                                 .make(mapView,
-                                                        "Successfully reserved a parking spot for you",
+                                                        "Successfully reserved a parking spot for you. " +
+                                                                "Show your QR code to the parking operator",
                                                         Snackbar.LENGTH_SHORT)
                                                 .show();
                                         String bookingId = firebase.getKey();

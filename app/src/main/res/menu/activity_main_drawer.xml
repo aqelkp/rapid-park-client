@@ -8,8 +8,8 @@
             android:title="Map" />
         <item
             android:id="@+id/nav_booking_history"
-            android:icon="@drawable/ic_payment_black_24dp"
-            android:title="Booking History" />
+            android:icon="@drawable/ic_account_box_black_24dp"
+            android:title="My Profile" />
         <item
             android:id="@+id/nav_balance"
             android:icon="@drawable/ic_payment_black_24dp"

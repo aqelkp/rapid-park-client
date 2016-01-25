@@ -27,6 +27,7 @@ import in.aqel.quickparksdk.Objects.User;
 import in.aqel.quickparksdk.Utils.AppConstants;
 import in.aqel.quickparksdk.Utils.PrefUtils;
 import xyz.brozzz.rapidpark.Fragments.BalanceFragment;
+import xyz.brozzz.rapidpark.Fragments.BookingHistoryFragment;
 import xyz.brozzz.rapidpark.Fragments.MapFragment;
 import xyz.brozzz.rapidpark.R;
 
@@ -175,6 +176,12 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_booking_history) {
+
+
+            fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, new BookingHistoryFragment());
+            fragmentTransaction.commit();
 
 
         } else if (id == R.id.nav_logout) {
