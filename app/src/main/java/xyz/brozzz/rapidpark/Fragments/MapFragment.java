@@ -23,7 +23,9 @@ import android.widget.TextView;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.MutableData;
 import com.firebase.client.Query;
+import com.firebase.client.Transaction;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -214,12 +216,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                                                 .show();
                                         Log.d(LOG_TAG, firebaseError.getMessage());
                                     } else {
+
                                         Snackbar
                                                 .make(mapView,
                                                         "Successfully reserved a parking spot for you",
                                                         Snackbar.LENGTH_SHORT)
                                                 .show();
                                         String bookingId = firebase.getKey();
+
+
+                                        Firebase countRef = ref.child("users").child(ref.getAuth().getUid())
+                                                .child("balance");
+
+//                                        Reducing amount from user
+                                        countRef.runTransaction(new Transaction.Handler() {
+                                            @Override
+                                            public Transaction.Result doTransaction(MutableData currentData) {
+                                                if(currentData.getValue() == null) {
+                                                    currentData.setValue(0);
+                                                } else {
+                                                    currentData.setValue( (Double) currentData.getValue() - activeParking.getBookingCharge());
+                                                }
+
+                                                return Transaction.success(currentData); //we can also abort by calling Transaction.abort()
+                                            }
+
+                                            @Override
+                                            public void onComplete(FirebaseError firebaseError, boolean committed, DataSnapshot currentData) {
+
+                                            }
+                                        });
                                         Log.d(LOG_TAG, bookingId);
 
                                     }
