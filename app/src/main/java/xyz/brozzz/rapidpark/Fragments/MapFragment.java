@@ -21,6 +21,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -102,26 +103,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
 
-        Parking[] parking = {new Parking("phoenix mall","asjhkfkkkj1",12.98927,80.2191565,200,100,150,50
+         Parking[] parking = {new Parking("phoenix mall","asjhkfkkkj1",12.98927,80.2191565,200,100,150,50
                 ,10,50,true,true,true),
                 new Parking("oppsit phoenix mall","asjhkfkkkj",12.989637, 80.217870,100,98,40,35
                         ,5,15,true,true,true)};
          gson = new Gson();
-        parkings.put(parking[0].getId(), gson.toJson(parking[0]));
-        parkings.put(parking[1].getId(), gson.toJson(parking[1]));
 
-        map.addMarker(new MarkerOptions()
-                .snippet( gson.toJson(parking[0]))
-                .position(new LatLng(parking[0].getLat(), parking[0].getLon()))
-                .title(parking[0].getName()));
-        map.addMarker(new MarkerOptions()
-                .snippet( gson.toJson(parking[1]))
-                .position(new LatLng(parking[1].getLat(), parking[1].getLon()))
-                .title(parking[1].getName()));
+
+        for(Parking par:parking){
+            parkings.put(par.getId(), gson.toJson(par));
+            Marker mark = map.addMarker(new MarkerOptions()
+                    .position(new LatLng(par.getLat(), par.getLon()))
+                    .snippet( gson.toJson(par))
+                    .title(par.getName()));
+           if(!par.isOpen()){
+               mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+           }else if(par.getCurrentCars()==par.getTotalCars()&&par.getCurrentBikes()==par.getTotalBikes()){
+               mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+           }else{
+               mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+           }
+        }
+
+
+
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(parking[0].getLat(), parking[0].getLon()), 14));
         map.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
-
-
 
         final LatLngBounds[] currentCameraBounds = new LatLngBounds[1];
         currentCameraBounds[0]=new LatLngBounds(new LatLng(0,0),new LatLng(0,0));
@@ -168,7 +175,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void FetchData(LatLngBounds bounds) {
-
+        Parking[] parking = {new Parking("phoenix mall","asjhkfkkkj1",bounds.northeast.latitude,bounds.northeast.longitude,200,200,200,200
+                ,10,50,true,true,true),
+                new Parking("oppsit phoenix mall","asjhkfkkkj",bounds.southwest.latitude,bounds.southwest.longitude,100,98,40,35
+                        ,5,15,true,false,false)};
+        for(Parking par:parking){
+            parkings.put(par.getId(), gson.toJson(par));
+            Marker mark = map.addMarker(new MarkerOptions()
+                    .position(new LatLng(par.getLat(), par.getLon()))
+                    .snippet( gson.toJson(par))
+                    .title(par.getName()));
+            if(!par.isOpen()){
+                mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            }else if(par.getCurrentCars()==par.getTotalCars()&&par.getCurrentBikes()==par.getTotalBikes()){
+                mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            }else{
+                mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            }
+        }
     }
 
     @Override

@@ -9,14 +9,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="descriptions">
-        <item>Grab best deals - Right now</item>
-        <item>Live and Dynamic feed</item>
-        <item>Get Notifications</item>
+        <item>RapidPark™ updates parking spaces in real-time. Park on the Go</item>
+        <item>Simple. Convenient. Easy to use</item>
+        <item>Never miss a spot</item>
     </string-array>
     <string-array name="headers">
-        <item>Happy</item>
-        <item>Feed</item>
-        <item>Notifications</item>
+        <item>On the Go</item>
+        <item>Simple</item>
+        <item>Fast</item>
     </string-array>
     <string name="title_activity_booking">BookingActivity</string>
     <string name="facebook_app_id">569738399866028</string>
