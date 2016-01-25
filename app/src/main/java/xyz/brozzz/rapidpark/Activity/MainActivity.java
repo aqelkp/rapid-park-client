@@ -21,6 +21,7 @@ import com.firebase.client.Firebase;
 
 import in.aqel.quickparksdk.Utils.AppConstants;
 import in.aqel.quickparksdk.Utils.PrefUtils;
+import xyz.brozzz.rapidpark.Fragments.BookingHistoryFragment;
 import xyz.brozzz.rapidpark.Fragments.MapFragment;
 import xyz.brozzz.rapidpark.R;
 
@@ -123,21 +124,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-
+        FragmentTransaction fragmentTransaction =
+                getSupportFragmentManager().beginTransaction();
         if (id == R.id.nav_map) {
-            // Handle the camera action
+            fragmentTransaction.replace(R.id.fragment_container, new MapFragment());
         } else if (id == R.id.nav_booking_history) {
-
-
+            fragmentTransaction.replace(R.id.fragment_container, new BookingHistoryFragment());
         } else if (id == R.id.nav_logout) {
             PrefUtils.clearpref(getBaseContext());
             Intent intent =new Intent(MainActivity.this,LoginActivity.class);
             startActivity(intent);
             finish();
         }
-
+        fragmentTransaction.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

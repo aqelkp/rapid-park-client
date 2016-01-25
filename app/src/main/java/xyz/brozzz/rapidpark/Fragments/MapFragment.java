@@ -1,11 +1,13 @@
 package xyz.brozzz.rapidpark.Fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,7 +41,6 @@ import java.util.HashMap;
 
 import in.aqel.quickparksdk.Objects.Parking;
 import in.aqel.quickparksdk.Utils.AppConstants;
-import xyz.brozzz.rapidpark.Activity.BookingActivity;
 import xyz.brozzz.rapidpark.R;
 
 
@@ -61,6 +62,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     Firebase ref;
     private static String LOG_TAG = "MapFragment";
     Marker ActiveMarker;
+    Boolean noWindow=false;
 
 
     @Override
@@ -183,9 +185,39 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(View v) {
 
-                Intent intent =new Intent(getActivity(),BookingActivity.class);
-                intent.putExtra("parking",gson.toJson(activeParking));
-                startActivity(intent);
+
+                if(true){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("We are going to book a spot in "+activeParking.getName()+" for ₹"
+                            +activeParking.getBookingCharge());
+                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("You dont have enough Balance");
+                    builder.setPositiveButton("Recharge", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         });
 
@@ -240,7 +272,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     if(par.getId().equals(ActiveParking.getId())) {
                         ActiveMarker.setSnippet(gson.toJson(par));
                         mark=ActiveMarker;
-                        Log.d("Ass hole asdasdfsdfsadfasdh",par.getName());
+                       // Log.d("Ass hole asdasdfsdfsadfasdh",par.getName());
                     }else{
                         mark = map.addMarker(new MarkerOptions()
                                 .position(new LatLng(par.getLat(), par.getLon()))
@@ -259,7 +291,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     }
                     markers.add(mark);
                 }
-                ActiveMarker.showInfoWindow();
+                if(noWindow){
+                    ActiveMarker.showInfoWindow();
+                }
 
             }
 
@@ -311,7 +345,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if(parking.isBooking()){
             slideUpDown(hiden);
             BookingCharge.setText("Bookinng charge ₹"+parking.getBookingCharge());
-
+            noWindow=true;
         }
         Log.d("clicked",marker.getSnippet());
         return false;
@@ -319,6 +353,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMapClick(LatLng latLng) {
+        noWindow=false;
         HidePanel(hiden);
     }
 
