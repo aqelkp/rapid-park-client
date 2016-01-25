@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +25,7 @@ import com.firebase.client.ValueEventListener;
 import in.aqel.quickparksdk.Objects.User;
 import in.aqel.quickparksdk.Utils.AppConstants;
 import in.aqel.quickparksdk.Utils.PrefUtils;
-import xyz.brozzz.rapidpark.Fragments.BalanceFragment;
+import xyz.brozzz.rapidpark.Fragments.BookingHistoryFragment;
 import xyz.brozzz.rapidpark.Fragments.MapFragment;
 import xyz.brozzz.rapidpark.R;
 
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity
         Navname.setText(PrefUtils.getName(this));
         Glide.with(this).load(PrefUtils.getProfilePic(this)).into(Navprofile);
 
-        fragmentTransaction =
+        FragmentTransaction fragmentTransaction =
                 getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, new MapFragment());
         fragmentTransaction.commit();
@@ -160,7 +159,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        FragmentTransaction fragmentTransaction =
+                getSupportFragmentManager().beginTransaction();
         if (id == R.id.nav_map) {
             // Handle the camera action
         } else if (id == R.id.nav_balance) {
@@ -169,17 +169,20 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.fragment_container, new BalanceFragment());
             fragmentTransaction.commit();
 
+            fragmentTransaction.replace(R.id.fragment_container, new MapFragment());
         } else if (id == R.id.nav_booking_history) {
 
 
         }
         else if (id == R.id.nav_logout) {
+            fragmentTransaction.replace(R.id.fragment_container, new BookingHistoryFragment());
+        } else if (id == R.id.nav_logout) {
             PrefUtils.clearpref(getBaseContext());
             Intent intent =new Intent(MainActivity.this,LoginActivity.class);
             startActivity(intent);
             finish();
         }
-
+        fragmentTransaction.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
