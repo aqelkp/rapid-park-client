@@ -181,7 +181,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             public void onClick(View v) {
 
                 Intent intent =new Intent(getActivity(),BookingActivity.class);
-                intent.putExtra("keyName",gson.toJson(activeParking));
+                intent.putExtra("parking",gson.toJson(activeParking));
                 startActivity(intent);
             }
         });

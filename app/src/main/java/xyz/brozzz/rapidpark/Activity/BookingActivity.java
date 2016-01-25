@@ -17,6 +17,8 @@ public class BookingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_booking);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        String data = getIntent().getExtras().getString("parking");
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

@@ -126,12 +126,10 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
 
+        if (id == R.id.nav_map) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_booking_history) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_logout) {
             PrefUtils.clearpref(getBaseContext());
