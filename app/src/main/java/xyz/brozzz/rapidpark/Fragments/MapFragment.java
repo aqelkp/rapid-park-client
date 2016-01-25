@@ -2,11 +2,13 @@ package xyz.brozzz.rapidpark.Fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
@@ -39,8 +41,11 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import in.aqel.quickparksdk.Objects.Booking;
 import in.aqel.quickparksdk.Objects.Parking;
+import in.aqel.quickparksdk.Objects.User;
 import in.aqel.quickparksdk.Utils.AppConstants;
+import xyz.brozzz.rapidpark.Activity.MainActivity;
 import xyz.brozzz.rapidpark.R;
 
 
@@ -62,7 +67,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     Firebase ref;
     private static String LOG_TAG = "MapFragment";
     Marker ActiveMarker;
+    User user;
     Boolean noWindow=false;
+    FragmentTransaction fragmentTransaction;
+
 
 
     @Override
@@ -74,7 +82,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         hiden=(RelativeLayout) v.findViewById(R.id.hiden);
         BookingCharge=(TextView) v.findViewById(R.id.bookingcharge);
-        AppCompatButton bookButton= (AppCompatButton) v.findViewById(R.id.bookbutton);
+        final AppCompatButton bookButton= (AppCompatButton) v.findViewById(R.id.bookbutton);
         // Gets the MapView from the XML layout and creates it
         mapView = (MapView) v.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
@@ -185,13 +193,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(View v) {
 
+                user = ((MainActivity) getActivity()).getUser();
+                boolean balanceAvailable = user.getBalance() - activeParking.getParkingCharge() > 0;
 
-                if(true){
+                if(balanceAvailable){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("We are going to book a spot in "+activeParking.getName()+" for ₹"
+                    builder.setMessage("We are going to reserve a spot in "+activeParking.getName()+" for ₹"
                             +activeParking.getBookingCharge());
+                    final Booking booking = new Booking(activeParking.getId(), ref.getAuth().getUid(),
+                            System.currentTimeMillis());
                     builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                            Log.d(LOG_TAG, "Starting to reserve a post");
+                            ref.child("bookings").push().setValue(booking, new Firebase.CompletionListener() {
+                                @Override
+                                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                    if (firebaseError != null){
+                                        Snackbar
+                                                .make(mapView, firebaseError.getMessage(), Snackbar.LENGTH_SHORT)
+                                                .show();
+                                        Log.d(LOG_TAG, firebaseError.getMessage());
+                                    } else {
+                                        Snackbar
+                                                .make(mapView,
+                                                        "Successfully reserved a parking spot for you",
+                                                        Snackbar.LENGTH_SHORT)
+                                                .show();
+                                        String bookingId = firebase.getKey();
+                                        Log.d(LOG_TAG, bookingId);
+
+                                    }
+                                }
+                            });
 
                         }
                     });
@@ -207,6 +240,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     builder.setMessage("You dont have enough Balance");
                     builder.setPositiveButton("Recharge", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+
+                            fragmentTransaction =
+                                    getActivity().getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.replace(R.id.fragment_container, new BalanceFragment());
+                            fragmentTransaction.commit();
 
                         }
                     });
