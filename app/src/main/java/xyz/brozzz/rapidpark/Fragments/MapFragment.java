@@ -16,6 +16,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -29,9 +34,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import in.aqel.quickparksdk.Objects.Parking;
+import in.aqel.quickparksdk.Utils.AppConstants;
 import xyz.brozzz.rapidpark.Activity.BookingActivity;
 import xyz.brozzz.rapidpark.R;
 
@@ -49,10 +56,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     Gson gson;
     TextView BookingCharge;
     Parking activeParking;
+    ArrayList<Parking> parkLists = new ArrayList<>();
+    ArrayList<Marker> markers = new ArrayList<>();
+    Firebase ref;
+    private static String LOG_TAG = "MapFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_maps, container, false);
+
+
+        ref = new Firebase(AppConstants.SERVER);
+
         hiden=(RelativeLayout) v.findViewById(R.id.hiden);
         BookingCharge=(TextView) v.findViewById(R.id.bookingcharge);
         AppCompatButton bookButton= (AppCompatButton) v.findViewById(R.id.bookbutton);
@@ -175,24 +190,61 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void FetchData(LatLngBounds bounds) {
-        Parking[] parking = {new Parking("phoenix mall","asjhkfkkkj1",bounds.northeast.latitude,bounds.northeast.longitude,200,200,200,200
-                ,10,50,true,true,true),
-                new Parking("oppsit phoenix mall","asjhkfkkkj",bounds.southwest.latitude,bounds.southwest.longitude,100,98,40,35
-                        ,5,15,true,false,false)};
-        for(Parking par:parking){
-            parkings.put(par.getId(), gson.toJson(par));
-            Marker mark = map.addMarker(new MarkerOptions()
-                    .position(new LatLng(par.getLat(), par.getLon()))
-                    .snippet( gson.toJson(par))
-                    .title(par.getName()));
-            if(!par.isOpen()){
-                mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-            }else if(par.getCurrentCars()==par.getTotalCars()&&par.getCurrentBikes()==par.getTotalBikes()){
-                mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            }else{
-                mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+        Log.d(LOG_TAG, "Northeast lat" + bounds.northeast.latitude );
+        Log.d(LOG_TAG, "South west lat " + bounds.southwest.latitude);
+        Query queryRef = ref.child("parkings")
+                .orderByChild("lat").startAt(bounds.southwest.latitude).endAt(bounds.northeast.latitude);
+
+        queryRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Log.d(LOG_TAG, "onChildAdded");
+                Log.d(LOG_TAG, "Length of snapshot" + snapshot.getChildrenCount());
+                parkLists = new ArrayList<Parking>();
+                Parking parking;
+                for (DataSnapshot parkingSnap: snapshot.getChildren()) {
+                    parking = parkingSnap.getValue(Parking.class);
+                    parking.setId(parkingSnap.getKey());
+                    Log.d(LOG_TAG, "Parking id:"  + parkingSnap.getKey());
+                    parkLists.add(parking);
+
+                }
+
+                Log.d(LOG_TAG, snapshot.toString());
+                if (snapshot.exists())
+                    Log.d(LOG_TAG, snapshot.getValue().toString());
+
+                for (Marker marker : markers){
+                    marker.remove();
+                }
+                markers.clear();
+                for(Parking par:parkLists){
+                    parkings.put(par.getId(), gson.toJson(par));
+                    Marker mark = map.addMarker(new MarkerOptions()
+                            .position(new LatLng(par.getLat(), par.getLon()))
+                            .snippet( gson.toJson(par))
+                            .title(par.getName()));
+
+                    int availability = par.getTotalCars() - par.getCurrentCars() ;
+                    if((float) availability / par.getTotalCars() < 0.1){
+                        mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                    }else if(availability < 1){
+                        mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    }else{
+                        mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    }
+                    markers.add(mark);
+                }
             }
-        }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+
     }
 
     @Override

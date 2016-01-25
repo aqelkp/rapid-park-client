@@ -1,34 +1,24 @@
 package xyz.brozzz.rapidpark.Activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.facebook.login.LoginManager;
-import com.google.android.gms.plus.Plus;
-
-import in.aqel.quickparksdk.Utils.PrefUtils;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
-import com.firebase.client.ValueEventListener;
 
-import in.aqel.quickparksdk.Objects.Parking;
 import in.aqel.quickparksdk.Utils.AppConstants;
 import in.aqel.quickparksdk.Utils.PrefUtils;
 import xyz.brozzz.rapidpark.Fragments.MapFragment;
@@ -81,7 +71,7 @@ public class MainActivity extends AppCompatActivity
         TextView Navemail=(TextView) headerView.findViewById(R.id.email);
         TextView Navname=(TextView) headerView.findViewById(R.id.name);
         ImageView Navprofile =(ImageView) headerView.findViewById(R.id.NavimageView);
-        Navemail.setText(PrefUtils.getEmail(this));
+//        Navemail.setText(PrefUtils.getEmail(this));
         Navname.setText(PrefUtils.getName(this));
         Glide.with(this).load(PrefUtils.getProfilePic(this)).into(Navprofile);
 
@@ -91,30 +81,7 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
 
 
-        Query queryRef = ref.child("parkings")
-                .orderByChild("lat").startAt(9.9918425).endAt(11.9918425);
 
-        queryRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                Log.d(LOG_TAG, "onChildAdded");
-                Log.d(LOG_TAG, "Length of snapshot" + snapshot.getChildrenCount());
-                Parking parking;
-                for (DataSnapshot parkingSnap: snapshot.getChildren()) {
-                    parking = parkingSnap.getValue(Parking.class);
-                    System.out.println(parking.getName() + " - " + snapshot.getKey());
-                }
-
-                Log.d(LOG_TAG, snapshot.toString());
-                if (snapshot.exists())
-                Log.d(LOG_TAG, snapshot.getValue().toString());
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
 
 
     }
