@@ -162,14 +162,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/login_status"
-                />
         </LinearLayout>
 
     </RelativeLayout>

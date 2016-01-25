@@ -19,4 +19,5 @@
         <item>Notifications</item>
     </string-array>
     <string name="title_activity_booking">BookingActivity</string>
+    <string name="facebook_app_id">569738399866028</string>
 </resources>

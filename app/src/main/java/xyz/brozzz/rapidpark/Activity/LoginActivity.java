@@ -1,5 +1,6 @@
 package xyz.brozzz.rapidpark.Activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
 import com.firebase.client.AuthData;
@@ -45,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import in.aqel.quickparksdk.Utils.AppConstants;
 import xyz.brozzz.rapidpark.R;
 
 
@@ -205,6 +208,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
          *              FACEBOOK               *
          ***************************************/
         /* Load the Facebook login button and set up the tracker to monitor access token changes */
+        FacebookSdk.sdkInitialize(getApplicationContext());
         mFacebookCallbackManager = CallbackManager.Factory.create();
         mFacebookLoginButton = (LinearLayout) findViewById(R.id.bfacebook);
         mFacebookAccessTokenTracker = new AccessTokenTracker() {
@@ -215,6 +219,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }
         };
 
+        mFacebookLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<String> permissionNeeds= Arrays.asList("public_profile");
+
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends"));
+            }
+        });
         /* *************************************
          *               GOOGLE                *
          ***************************************/
@@ -249,10 +261,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         /* *************************************
          *               GENERAL               *
          ***************************************/
-        mLoggedInStatusTextView = (TextView) findViewById(R.id.login_status);
+      //  mLoggedInStatusTextView = (TextView) findViewById(R.id.login_status);
 
+        Firebase.setAndroidContext(getBaseContext());
         /* Create the Firebase ref that is used for all authentication with Firebase */
-        mFirebaseRef = new Firebase("");
+        mFirebaseRef = new Firebase(AppConstants.SERVER);
 
         /* Setup the progress dialog that is displayed later when authenticating with Firebase */
         mAuthProgressDialog = new ProgressDialog(this);
@@ -458,6 +471,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         public void onAuthenticated(AuthData authData) {
             mAuthProgressDialog.hide();
             Log.i(TAG, provider + " auth successful");
+            String name,email,profilepic;
+            name=authData.getProviderData().get("displayName").toString();
+            email =authData.getProviderData().get("displayName").toString();
+            profilepic=authData.getProviderData().get("displayName").toString();
+
+            Intent intent =new Intent(LoginActivity.this,MainActivity.class);
+            intent.putExtra("name",name);
+            intent.putExtra("email",email);
+            intent.putExtra("profilePic",profilepic);
+            startActivity(intent);
+
          //   setAuthenticatedUser(authData);
         }
 

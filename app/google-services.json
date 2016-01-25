@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_id": "rapidpark-1200",
+    "project_number": "87957629471",
+    "name": "rapidpark"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87957629471:android:860d85068376ce13",
+        "client_id": "android:xyz.brozzz.rapidpark",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "xyz.brozzz.rapidpark"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87957629471-b977iqtphf9rv5ung5i5omoipn98sm70.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "xyz.brozzz.rapidpark",
+            "certificate_hash": "4AE111F61F7BA97FCE19B67A4C42C001B4FAC39F"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
