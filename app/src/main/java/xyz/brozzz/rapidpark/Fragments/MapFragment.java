@@ -347,11 +347,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
                     int availability = par.getTotalCars() - par.getCurrentCars() ;
-                    if((float) availability / par.getTotalCars() < 0.1){
-                        mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                    }else if(availability < 1){
+                    if(availability < 1){
                         mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                    }else{
+                    }
+                    else if((float) availability / par.getTotalCars() < 0.1){
+                        mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                    } else{
                         mark.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                     }
                     markers.add(mark);

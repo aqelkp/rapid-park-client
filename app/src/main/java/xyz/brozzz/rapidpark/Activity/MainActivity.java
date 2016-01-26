@@ -90,32 +90,36 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.add(R.id.fragment_container, new MapFragment());
         fragmentTransaction.commit();
 
-        ref.child("users").child(ref.getAuth().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() > 0){
-                    Log.d(LOG_TAG, "User " + dataSnapshot.toString());
-                    user = dataSnapshot.getValue(User.class);
-                    Log.d(LOG_TAG, "User working" + user.getName());
 
-                    for (DataSnapshot parkingSnap: dataSnapshot.getChildren()) {
-                        Log.d(LOG_TAG, parkingSnap.getValue().toString());
-                        for (DataSnapshot child: parkingSnap.getChildren()) {
-                            Log.d(LOG_TAG, "Key " + child.getKey());
-                            Log.d(LOG_TAG, "Value " + child.getValue());
-                            Log.d(LOG_TAG, "Par" + child.toString());
+            if(PrefUtils.isLogedin(this)){
+                ref.child("users").child(ref.getAuth().getUid()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getChildrenCount() > 0){
+                            Log.d(LOG_TAG, "User " + dataSnapshot.toString());
+                            user = dataSnapshot.getValue(User.class);
+                            Log.d(LOG_TAG, "User working" + user.getName());
+
+                            for (DataSnapshot parkingSnap: dataSnapshot.getChildren()) {
+                                Log.d(LOG_TAG, parkingSnap.getValue().toString());
+                                for (DataSnapshot child: parkingSnap.getChildren()) {
+                                    Log.d(LOG_TAG, "Key " + child.getKey());
+                                    Log.d(LOG_TAG, "Value " + child.getValue());
+                                    Log.d(LOG_TAG, "Par" + child.toString());
 
 
+                                }
+                            }
                         }
                     }
-                }
-            }
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
 
             }
-        });
 
 
 
